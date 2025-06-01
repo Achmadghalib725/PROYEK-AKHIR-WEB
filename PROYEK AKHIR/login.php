@@ -5,31 +5,40 @@ require_once "config/db.php";
 $error = "";
 
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
-    $username = mysqli_real_escape_string($conn, $_POST["username"]);
-    $password = $_POST["password"];
-
-    $sql = "SELECT * FROM users WHERE username = '$username'";
-    $result = mysqli_query($conn, $sql);
-
-    if ($result && mysqli_num_rows($result) === 1) {
-        $user = mysqli_fetch_assoc($result);
-
-        if (password_verify($password, $user["password"])) {
-            $_SESSION["id"] = $user["id"];
-            $_SESSION["username"] = $user["username"];
-            $_SESSION["role"] = $user["role"];
-
-            if ($user["role"] == "admin") {
-                header("Location: dashboard_admin.php");
-            } else {
-                header("Location: dashboard_user.php");
-            }
-            exit();
-        } else {
-            $error = "Password salah!";
-        }
+    // Validasi input
+    if (empty($_POST["username"]) || empty($_POST["password"])) {
+        $error = "Username dan Password tidak boleh kosong!";
     } else {
-        $error = "Akun tidak ditemukan!";
+        $username = mysqli_real_escape_string($conn, $_POST["username"]);
+        $password = $_POST["password"];
+
+        // Menggunakan prepared statement untuk menghindari SQL injection
+        $stmt = $conn->prepare("SELECT * FROM users WHERE username = ?");
+        $stmt->bind_param("s", $username);
+        $stmt->execute();
+        $result = $stmt->get_result();
+
+        if ($result && mysqli_num_rows($result) === 1) {
+            $user = $result->fetch_assoc();
+
+            // Verifikasi password
+            if (password_verify($password, $user["password"])) {
+                $_SESSION["id"] = $user["id"];
+                $_SESSION["username"] = $user["username"];
+                $_SESSION["role"] = $user["role"];
+
+                if ($user["role"] == "admin") {
+                    header("Location: dashboard_admin.php");
+                } else {
+                    header("Location: dashboard_user.php");
+                }
+                exit();
+            } else {
+                $error = "Password salah!";
+            }
+        } else {
+            $error = "Akun tidak ditemukan!";
+        }
     }
 }
 ?>
@@ -63,30 +72,30 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         .error { color: red; text-align: center; margin-top: 10px; }
     </style>
 </head>
+<body>
 <div class="login-box">
-        <h2>Login</h2>
-        <?php if ($error): ?>
-            <p class="error"><?= $error ?></p>
-        <?php endif; ?>
-        <form method="post">
-            <div class="form-group">
-                <label>Username:</label>
-                <input type="text" name="username" required autocomplete="off">
-            </div>
-            <div class="form-group">
-                <label>Password:</label>
-                <input type="password" name="password" required>
-            </div>
-            <button class="btn" type="submit">Login</button>
-        </form>
+    <h2>Login</h2>
+    <?php if ($error): ?>
+        <p class="error"><?= $error ?></p>
+    <?php endif; ?>
+    <form method="post">
+        <div class="form-group">
+            <label>Username:</label>
+            <input type="text" name="username" required autocomplete="off">
+        </div>
+        <div class="form-group">
+            <label>Password:</label>
+            <input type="password" name="password" required>
+        </div>
+        <button class="btn" type="submit">Login</button>
+    </form>
 
-        <p style="text-align: center; margin-top: 15px;">
-            Belum punya akun? 
-            <a href="register.php" style="color: #007BFF; text-decoration: none; font-weight: bold;">
-                Daftar di sini
-            </a>
-        </p>
-    </div>
-    
+    <p style="text-align: center; margin-top: 15px;">
+        Belum punya akun? 
+        <a href="register.php" style="color: #007BFF; text-decoration: none; font-weight: bold;">
+            Daftar di sini
+        </a>
+    </p>
+</div>
 </body>
 </html>
