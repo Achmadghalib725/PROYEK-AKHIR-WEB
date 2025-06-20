@@ -143,7 +143,7 @@ $user = mysqli_fetch_assoc(mysqli_query($conn, "SELECT * FROM users WHERE id=$id
         </div>
         <div class="form-group">
             <label>Keterangan:</label>
-            <textarea name="keterangan" required><?= htmlspecialchars($user['keterangan']) ?></textarea>
+            <textarea name="keterangan" required><?= htmlspecialchars($user['keterangan'] ?? '') ?></textarea>
         </div>
         <div class="form-group">
             <label>Foto Profil:</label>
