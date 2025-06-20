@@ -43,10 +43,6 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 }
 ?>
 
-<?php if (isset($_GET['registered'])) : ?>
-    <p style="color: #2a9d8f;">Registrasi berhasil! Silakan login.</p>
-<?php endif; ?>
-
 <!DOCTYPE html>
 <html lang="id">
 <head>
@@ -117,13 +113,20 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         .btn:hover {
             background-color: #ffafcc;
         }
-        .error { 
-            color: #ffb4a2; 
+        .error, .success {
             text-align: center; 
             margin-bottom: 15px;
-            background-color: #fff1f0;
             padding: 10px;
             border-radius: 8px;
+        }
+        .error { 
+            color: #d32f2f; 
+            background-color: #ffcdd2;
+        }
+        /* Style baru untuk pesan sukses */
+        .success {
+            color: #2e7d32;
+            background-color: #c8e6c9;
         }
         p.bottom-text {
             text-align: center; 
@@ -144,9 +147,18 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 <div class="login-box">
     <h2>PINJEMIN</h2>
     <h3>Login</h3>
-    <?php if ($error): ?>
-        <p class="error"><?= $error ?></p>
+    
+    <?php if (isset($_GET['registered'])) : ?>
+        <p class="success">Registrasi berhasil! Silakan login.</p>
     <?php endif; ?>
+    <?php if (isset($_GET['message']) && $_GET['message'] == 'profile_deleted_successfully') : ?>
+        <p class="success">Akun Anda telah berhasil dihapus.</p>
+    <?php endif; ?>
+
+    <?php if ($error): ?>
+        <p class="error"><?= htmlspecialchars($error) ?></p>
+    <?php endif; ?>
+
     <form method="post">
         <div class="form-group">
             <label>Username:</label>
