@@ -117,7 +117,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         </div>
         <div class="form-group">
             <label>Keterangan:</label>
-            <input type="text" name="keterangan" value="<?= htmlspecialchars($user['keterangan']) ?>" required>
+            <input type="text" name="keterangan" value="<?= htmlspecialchars($user['keterangan'] ?? '') ?>" required>
         </div>
         <div class="form-group">
             <label>Ganti Password (opsional):</label>
