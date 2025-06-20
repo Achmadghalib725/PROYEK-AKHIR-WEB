@@ -1,4 +1,14 @@
 <?php
+session_start();
+
+if (isset($_SESSION['username'])) {
+    if ($_SESSION['role'] == 'admin') {
+        header("Location: dashboard_admin.php");
+    } else {
+        header("Location: dashboard_user.php");
+    }
+    exit();
+}
 require_once "config/db.php";
 
 $errors = [];
