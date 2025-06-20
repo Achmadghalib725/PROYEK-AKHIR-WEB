@@ -112,7 +112,7 @@ $user = mysqli_fetch_assoc(mysqli_query($conn, "SELECT * FROM users WHERE id=$id
     </div>
     <div class="form-group">
         <label>Keterangan</label>
-        <p><?= ($user['keterangan']) ?></p>
+        <p><?= htmlspecialchars($user['keterangan'] ?? 'Tidak ada keterangan.') ?></p>
     </div>
     
     <div class="bottom-text">
